@@ -1,0 +1,28 @@
+import cv2
+import sys
+import os
+
+
+# 训练参数文件
+cascPath = '/Users/tyc_219/Desktop/face-rec/haarcascade_frontalface_default.xml'
+faceCascade = cv2.CascadeClassifier(cascPath)  # 分类器
+
+base = '/Users/tyc_219/Desktop/face-rec/male/'
+num = 0
+for img in os.listdir(base):
+    print(base + img)
+    image = cv2.imread(base + img)  # 读取图片
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.equalizeHist(gray)  # 直方图均衡化，提高分类效果
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.2,
+        minNeighbors=5,
+        minSize=(50, 50)
+    )
+
+    for (x, y, w, h) in faces:
+        cv2.imwrite('/Users/tyc_219/Desktop/face-rec/img/' + str(num) + '.jpg', image[y:y + h, x:x + w])
+        num += 1
+        print('第' + str(num) + '张照片输出成功！')
+    #     cv2.imshow("Faces found", image)
