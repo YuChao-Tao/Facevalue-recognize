@@ -1,0 +1,37 @@
+from lxml.html import fromstring
+from selenium import webdriver
+import time
+import requests
+from bs4 import  BeautifulSoup
+
+
+url = 'https://cn.bing.com/images/search?q=%E4%BA%BA%E7%89%A9%E8%82%96%E5%83%8F&FORM=HDRSC2'
+
+browser = webdriver.Firefox()
+browser.get(url)
+js="var q=document.documentElement.scrollTop=100000"
+browser.execute_script(js)
+time.sleep(15)
+html = browser.page_source
+browser.close()
+
+tree = fromstring(html)
+print(tree)
+pics = tree.xpath('//div[@class="imgpt"]/a[@class="isuc"]/div[@class="img-cont hoff"]/img/@src')
+print(pics)
+
+pic_path = '/Users/tyc_219/Desktop/face-rec/male'
+
+
+for index in range(len(pics)):
+    img_name = pic_path + str(index + 1) + '.jpg'
+    if len(pics[index]) < 100:
+       with open(img_name, 'wb') as file:
+           request = requests.post(pics[index])
+           soup = BeautifulSoup(request.text, 'lxml')
+           print(soup)
+           img = soup.find('img')
+           print(img)
+
+
+print('抓取完成！')
